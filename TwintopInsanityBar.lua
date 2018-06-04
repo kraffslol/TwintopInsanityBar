@@ -1,5 +1,33 @@
-local addonVersion = "7.3.5.22"
+local addonName = ...
+
+-- Localize globals
+local CreateFrame, UnitBuff, GetSpellInfo = CreateFrame, UnitBuff, GetSpellInfo
+local UnitIsDeadOrGhost, PlaySoundFile =  UnitIsDeadOrGhost, PlaySoundFile
+local UnitGUID, GetActiveSpecGroup, hooksecurefunc = UnitGUID, GetActiveSpecGroup, hooksecurefunc
+local pairs, select, GetTalentInfo, string = pairs, select, GetTalentInfo, string
+local tonumber, type, strtrim, strlen = tonumber, type, strtrim, strlen
+local GetTime, UnitSpellHaste, UnitPowerMax = GetTime, UnitSpellHaste, UnitPowerMax
+local SPELL_POWER_INSANITY, IsEquippedItem, GetSpecialization = SPELL_POWER_INSANITY, IsEquippedItem, GetSpecialization
+local UnitAffectingCombat, GetScreenWidth, GetScreenHeight = UnitAffectingCombat, GetScreenWidth, GetScreenHeight
+local UIParent, GameFontHighlightSmall, GameFontNormal = UIParent, GameFontHighlightSmall, GameFontNormal
+local GameFontHighlight, ColorPickerFrame, GameFontNormalLarge = GameFontHighlight, ColorPickerFrame, GameFontNormalLarge
+local GameFontNormalSmall, GameFontHighlightSmall, GetNetStats = GameFontNormalSmall, GameFontHighlightSmall, GetNetStats
+local UnitCastingInfo, UnitChannelInfo = UnitCastingInfo, UnitChannelInfo
+local mod, GetTotemInfo, GetSpellCooldown, UnitPower = mod, GetTotemInfo, GetSpellCooldown, UnitPower
+local getglobal, ReloadUI, unpack, CreateFont = getglobal, ReloadUI, unpack, CreateFont
+local print, UnitHealth, UnitHealthMax, table = print, UnitHealth, UnitHealthMax, table
+local strfind, strsub, InCombatLockdown, UnitClass = strfind, strsub, InCombatLockdown, UnitClass
+local mabs, msin, mfloor, mceil, mmin, mmax = math.abs, math.sin, math.floor, math.ceil, math.min, math.max
+local GetAddOnMetadata, StaticPopupDialogs, InterfaceOptions_AddCategory = GetAddOnMetadata, StaticPopupDialogs, InterfaceOptions_AddCategory
+local UIDropDownMenu_SetWidth, UIDropDownMenu_SetText, UIDropDownMenu_JustifyText = UIDropDownMenu_SetWidth, UIDropDownMenu_SetText, UIDropDownMenu_JustifyText
+local InterfaceOptionsFrame_OpenToCategory, StaticPopup_Show, InterfaceOptionsFrameAddOnsListScrollBar = InterfaceOptionsFrame_OpenToCategory, StaticPopup_Show, InterfaceOptionsFrameAddOnsListScrollBar
+local InterfaceOptionsListButton_ToggleSubCategories, CloseDropDownMenus, UIDropDownMenu_AddButton = InterfaceOptionsListButton_ToggleSubCategories, CloseDropDownMenus, UIDropDownMenu_AddButton
+local UIDropDownMenu_CreateInfo, OpacitySliderFrame = UIDropDownMenu_CreateInfo, OpacitySliderFrame
+local UIDropDownMenu_Initialize, INTERFACEOPTIONS_ADDONCATEGORIES = UIDropDownMenu_Initialize, INTERFACEOPTIONS_ADDONCATEGORIES
+
+local addonVersion = GetAddOnMetadata(addonName, "Version")
 local addonReleaseDate = "June 04, 2018"
+local classIndex = select(3, UnitClass("player"))
 local barContainerFrame = CreateFrame("Frame", nil, UIParent)
 local insanityFrame = CreateFrame("StatusBar", nil, barContainerFrame)
 local castingFrame = CreateFrame("StatusBar", nil, barContainerFrame)
@@ -183,15 +211,6 @@ local spells = {
 	}
 }
 
-local function TableLength(T)
-	local count = 0
-	local _
-	for _ in pairs(T) do
-		count = count + 1
-	end
-	return count
-end
-
 local function FillSpellData()
 	spells.mindbender.name = select(2, GetTalentInfo(6, 3, characterData.specGroup))
 	spells.powerInfusion.name = select(2, GetTalentInfo(6, 1, characterData.specGroup))
@@ -320,7 +339,7 @@ local function GetRGBAFromString(s, normalize)
 end
 
 local function PulseFrame(frame)
-	frame:SetAlpha(((1.0 - settings.colors.bar.flashAlpha) * math.abs(math.sin(2 * (GetTime()/settings.colors.bar.flashPeriod)))) + settings.colors.bar.flashAlpha)
+	frame:SetAlpha(((1.0 - settings.colors.bar.flashAlpha) * mabs(msin(2 * (GetTime()/settings.colors.bar.flashPeriod)))) + settings.colors.bar.flashAlpha)
 end
 
 local function GetCurrentGCDTime()
@@ -672,8 +691,8 @@ end
 
 local function CaptureBarPosition()
 	local point, relativeTo, relativePoint, xOfs, yOfs = barContainerFrame:GetPoint()
-	local maxWidth = math.floor(GetScreenWidth())
-	local maxHeight = math.floor(GetScreenHeight())
+	local maxWidth = mfloor(GetScreenWidth())
+	local maxHeight = mfloor(GetScreenHeight())
 
 	if relativePoint == "CENTER" then
 		--No action needed.
@@ -1044,7 +1063,7 @@ local function ConvertColorDecimalToHex(r, g, b, a)
 	if r == 0 or r == nil then
 		_r = "00"
 	else
-		_r = string.format("%x", math.ceil(r * 255))
+		_r = string.format("%x", mceil(r * 255))
 		if string.len(_r) == 1 then
 			_r = _r .. _r
 		end
@@ -1053,7 +1072,7 @@ local function ConvertColorDecimalToHex(r, g, b, a)
 	if g == 0 or g == nil then
 		_g = "00"
 	else
-		_g = string.format("%x", math.ceil(g * 255))
+		_g = string.format("%x", mceil(g * 255))
 		if string.len(_g) == 1 then
 			_g = _g .. _g
 		end
@@ -1062,7 +1081,7 @@ local function ConvertColorDecimalToHex(r, g, b, a)
 	if b == 0 or b == nil then
 		_b = "00"
 	else
-		_b = string.format("%x", math.ceil(b * 255))
+		_b = string.format("%x", mceil(b * 255))
 		if string.len(_b) == 1 then
 			_b = _b .. _b
 		end
@@ -1071,7 +1090,7 @@ local function ConvertColorDecimalToHex(r, g, b, a)
 	if a == 0 or a == nil then
 		_a = "00"
 	else
-		_a = string.format("%x", math.ceil(a * 255))
+		_a = string.format("%x", mceil(a * 255))
 		if string.len(_a) == 1 then
 			_a = _a .. _a
 		end
@@ -1419,7 +1438,7 @@ local function BarText()
 
 	local hastePercent = string.format("|c%s%." .. settings.hastePrecision .. "f%%|c%s", _hasteColor, snapshotData.haste, settings.colors.text.left)
 	--$vfStacks
-	local voidformStacks = string.format("%.0f", math.min(snapshotData.voidform.totalStacks, 100))
+	local voidformStacks = string.format("%.0f", mmin(snapshotData.voidform.totalStacks, 100))
 	--$vfIncoming
 	local voidformStacksIncoming = string.format("%.0f", snapshotData.voidform.additionalStacks)
 	
@@ -1488,7 +1507,7 @@ local function BarText()
 	--$ttd
 	local ttd = ""
 	if snapshotData.targetData.ttdIsActive and snapshotData.targetData.currentTargetGuid ~= nil and snapshotData.targetData.targets[snapshotData.targetData.currentTargetGuid] ~= nil and snapshotData.targetData.targets[snapshotData.targetData.currentTargetGuid].ttd ~= 0 then
-		local ttdMinutes = math.floor(snapshotData.targetData.targets[snapshotData.targetData.currentTargetGuid].ttd / 60)
+		local ttdMinutes = mfloor(snapshotData.targetData.targets[snapshotData.targetData.currentTargetGuid].ttd / 60)
 		local ttdSeconds = snapshotData.targetData.targets[snapshotData.targetData.currentTargetGuid].ttd % 60
 		ttd = string.format("%d:%0.2d", ttdMinutes, ttdSeconds)
 	else
@@ -1719,7 +1738,7 @@ local function UpdateMindbenderValues()
 			end        
 			
 			snapshotData.mindbender.remaining.time = timeRemaining
-			snapshotData.mindbender.remaining.swings = math.ceil((timeRemaining - timeToNextSwing) / swingSpeed)
+			snapshotData.mindbender.remaining.swings = mceil((timeRemaining - timeToNextSwing) / swingSpeed)
 			
 			local gcd = swingSpeed				
 			if gcd < 0.75 then
@@ -1727,9 +1746,9 @@ local function UpdateMindbenderValues()
 			end
 			
 			if timeRemaining > (gcd * snapshotData.mindbender.remaining.swings) then
-				snapshotData.mindbender.remaining.gcds = math.ceil(((gcd * snapshotData.mindbender.remaining.swings) - timeToNextSwing) / swingSpeed)
+				snapshotData.mindbender.remaining.gcds = mceil(((gcd * snapshotData.mindbender.remaining.swings) - timeToNextSwing) / swingSpeed)
 			else
-				snapshotData.mindbender.remaining.gcds = math.ceil((timeRemaining - timeToNextSwing) / swingSpeed)
+				snapshotData.mindbender.remaining.gcds = mceil((timeRemaining - timeToNextSwing) / swingSpeed)
 			end	
 				
 			snapshotData.mindbender.swingTime = currentTime
@@ -1744,9 +1763,9 @@ local function UpdateMindbenderValues()
 				end
 			elseif settings.mindbender.mode == "time" then
 				if snapshotData.mindbender.remaining.time > settings.mindbender.timeMax then
-					countValue = math.ceil((settings.mindbender.timeMax - timeToNextSwing) / swingSpeed)                
+					countValue = mceil((settings.mindbender.timeMax - timeToNextSwing) / swingSpeed)                
 				else
-					countValue = math.ceil((snapshotData.mindbender.remaining.time - timeToNextSwing) / swingSpeed)
+					countValue = mceil((snapshotData.mindbender.remaining.time - timeToNextSwing) / swingSpeed)
 				end
 			else --assume GCD
 				if snapshotData.mindbender.remaining.swings > settings.mindbender.swingsMax then
@@ -1871,16 +1890,16 @@ local function ConstructOptionsPanel()
 	local yOffset3 = 40
 	local yOffset4 = 20
 
-	local maxWidth = math.floor(GetScreenWidth())
-	local minWidth = math.max(math.ceil(settings.bar.border * 8), 120)
+	local maxWidth = mfloor(GetScreenWidth())
+	local minWidth = mmax(mceil(settings.bar.border * 8), 120)
 	
-	local maxHeight = math.floor(GetScreenHeight())
-	local minHeight = math.max(math.ceil(settings.bar.border * 8), 1)
+	local maxHeight = mfloor(GetScreenHeight())
+	local minHeight = mmax(mceil(settings.bar.border * 8), 1)
 	local barWidth = 250
 	local barHeight = 20
 	local title = ""
 
-	local maxBorderHeight = math.min(math.floor(settings.bar.height/8), math.floor(settings.bar.width/8))
+	local maxBorderHeight = mmin(mfloor(settings.bar.height/8), mfloor(settings.bar.width/8))
 
 	interfaceSettingsFrame = {}
 	interfaceSettingsFrame.panel = CreateFrame("Frame", "TwintopInsanityBarPanel", UIParent)
@@ -2002,7 +2021,7 @@ local function ConstructOptionsPanel()
 		castingFrame:SetWidth(value-(settings.bar.border*2))
 		passiveFrame:SetWidth(value-(settings.bar.border*2))
 		RepositionInsanityFrameThreshold()
-		local maxBorderSize = math.min(math.floor(settings.bar.height/ 8), math.floor(settings.bar.width / 8))
+		local maxBorderSize = mmin(mfloor(settings.bar.height/ 8), mfloor(settings.bar.width / 8))
 		controls.borderWidth:SetMinMaxValues(0, maxBorderSize)
 		controls.borderWidth.MaxLabel:SetText(maxBorderSize)
 	end)
@@ -2029,14 +2048,14 @@ local function ConstructOptionsPanel()
 		leftTextFrame:SetHeight(settings.bar.height * 3.5)
 		middleTextFrame:SetHeight(settings.bar.height * 3.5)
 		rightTextFrame:SetHeight(settings.bar.height * 3.5)
-		local maxBorderSize = math.min(math.floor(settings.bar.height/ 8), math.floor(settings.bar.width / 8))
+		local maxBorderSize = mmin(mfloor(settings.bar.height/ 8), mfloor(settings.bar.width / 8))
 		controls.borderWidth:SetMinMaxValues(0, maxBorderSize)
 		controls.borderWidth.MaxLabel:SetText(maxBorderSize)
 	end)
 
 	title = "Bar Horizontal Position"
 	yCoord = yCoord - yOffset1
-	controls.horizontal = BuildSlider(parent, title, math.ceil(-maxWidth/2), math.floor(maxWidth/2), settings.bar.xPos, 1, 0,
+	controls.horizontal = BuildSlider(parent, title, mceil(-maxWidth/2), mfloor(maxWidth/2), settings.bar.xPos, 1, 0,
 								  barWidth, barHeight, xCoord+xPadding2, yCoord)
 	controls.horizontal:SetScript("OnValueChanged", function(self, value)
 		local min, max = self:GetMinMaxValues()
@@ -2053,7 +2072,7 @@ local function ConstructOptionsPanel()
 	end)
 
 	title = "Bar Vertical Position"
-	controls.vertical = BuildSlider(parent, title, math.ceil(-maxHeight/2), math.ceil(maxHeight/2), settings.bar.yPos, 1, 0,
+	controls.vertical = BuildSlider(parent, title, mceil(-maxHeight/2), mceil(maxHeight/2), settings.bar.yPos, 1, 0,
 								  barWidth, barHeight, xCoord2, yCoord)
 	controls.vertical:SetScript("OnValueChanged", function(self, value)
 		local min, max = self:GetMinMaxValues()
@@ -2110,8 +2129,8 @@ local function ConstructOptionsPanel()
 		middleTextFrame:SetHeight(settings.bar.height * 3.5)
 		rightTextFrame:SetHeight(settings.bar.height * 3.5)
 
-		local minBarWidth = math.max(settings.bar.border * 8, 120)
-		local minBarHeight = math.max(settings.bar.border * 8, 1)
+		local minBarWidth = mmax(settings.bar.border * 8, 120)
+		local minBarHeight = mmax(settings.bar.border * 8, 1)
 		controls.height:SetMinMaxValues(minBarHeight, maxHeight)
 		controls.height.MinLabel:SetText(minBarHeight)
 		controls.width:SetMinMaxValues(minBarWidth, maxWidth)
@@ -2150,7 +2169,7 @@ local function ConstructOptionsPanel()
 		local textures = addonData.libs.SharedMedia:HashTable("statusbar")
 		local texturesList = addonData.libs.SharedMedia:List("statusbar")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(textures) / entries)
+			local menus = mceil(#texturesList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -2211,7 +2230,7 @@ local function ConstructOptionsPanel()
 		local textures = addonData.libs.SharedMedia:HashTable("statusbar")
 		local texturesList = addonData.libs.SharedMedia:List("statusbar")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(textures) / entries)
+			local menus = mceil(#texturesList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -2274,7 +2293,7 @@ local function ConstructOptionsPanel()
 		local textures = addonData.libs.SharedMedia:HashTable("statusbar")
 		local texturesList = addonData.libs.SharedMedia:List("statusbar")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(textures) / entries)
+			local menus = mceil(#texturesList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -2358,7 +2377,7 @@ local function ConstructOptionsPanel()
 		local textures = addonData.libs.SharedMedia:HashTable("border")
 		local texturesList = addonData.libs.SharedMedia:List("border")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(textures) / entries)
+			local menus = mceil(#texturesList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -2420,7 +2439,7 @@ local function ConstructOptionsPanel()
 		local textures = addonData.libs.SharedMedia:HashTable("background")
 		local texturesList = addonData.libs.SharedMedia:List("background")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(textures) / entries)
+			local menus = mceil(#texturesList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -2819,7 +2838,7 @@ local function ConstructOptionsPanel()
 		local fonts = addonData.libs.SharedMedia:HashTable("font")
 		local fontsList = addonData.libs.SharedMedia:List("font")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(fonts) / entries)
+			local menus = mceil(#fontsList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -2881,7 +2900,7 @@ local function ConstructOptionsPanel()
 		local fonts = addonData.libs.SharedMedia:HashTable("font")
 		local fontsList = addonData.libs.SharedMedia:List("font")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(fonts) / entries)
+			local menus = mceil(#fontsList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -2945,7 +2964,7 @@ local function ConstructOptionsPanel()
 		local fonts = addonData.libs.SharedMedia:HashTable("font")
 		local fontsList = addonData.libs.SharedMedia:List("font")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(fonts) / entries)
+			local menus = mceil(#fontsList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -3651,7 +3670,7 @@ local function ConstructOptionsPanel()
 		local sounds = addonData.libs.SharedMedia:HashTable("sound")
 		local soundsList = addonData.libs.SharedMedia:List("sound")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(sounds) / entries)
+			local menus = mceil(#soundsList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -3898,7 +3917,7 @@ local function ConstructOptionsPanel()
 		local sounds = addonData.libs.SharedMedia:HashTable("sound")
 		local soundsList = addonData.libs.SharedMedia:List("sound")
 		if (level or 1) == 1 or menuList == nil then
-			local menus = math.ceil(TableLength(sounds) / entries)
+			local menus = mceil(#soundsList / entries)
 			for i=0, menus-1 do
 				info.hasArrow = true
 				info.notCheckable = true
@@ -4044,10 +4063,10 @@ function timerFrame:onUpdate(sinceLastUpdate)
 			local ttd = 0
 			--local cleanupTime = currentTime - (settings.ttd.numEntries * settings.ttd.sampleRate)
 
-			local count = TableLength(snapshotData.targetData.targets[guid].snapshot)
+			local count = #snapshotData.targetData.targets[guid].snapshot
 			if count > 0 and snapshotData.targetData.targets[guid].snapshot[1] ~= nil then
-				healthDelta = math.max(snapshotData.targetData.targets[guid].snapshot[1].health - currentHealth, 0)
-				timeDelta = math.max(currentTime - snapshotData.targetData.targets[guid].snapshot[1].time, 0)
+				healthDelta = mmax(snapshotData.targetData.targets[guid].snapshot[1].health - currentHealth, 0)
+				timeDelta = mmax(currentTime - snapshotData.targetData.targets[guid].snapshot[1].time, 0)
 			end
 
 			if isDead then
@@ -4319,47 +4338,49 @@ insanityFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 insanityFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 insanityFrame:RegisterEvent("PLAYER_LOGOUT") -- Fired when about to log out
 insanityFrame:SetScript("OnEvent", function(self, event, arg1, ...)
-	local _, _, classIndex = UnitClass("player")
-	if classIndex == 5 then
-		local checkSpec = false
+	if classIndex ~= 5 then
+		-- Not playing a priest. Stop listening to events.
+		self:UnregisterAllEvents()
+		return
+	end
 
-		if event == "ADDON_LOADED" and arg1 == "TwintopInsanityBar" then
-			if not addonData.loaded then
-				addonData.loaded = true
-				LoadDefaultSettings()
-				if TwintopInsanityBarSettings then
-					settings = MergeSettings(settings,TwintopInsanityBarSettings)
-				end
-				--Temporary fix for font settings placement until BfA
-				settings.displayText.left.fontSize = settings.displayText.fontSizeLeft
-				settings.displayText.middle.fontSize = settings.displayText.fontSizeMiddle
-				settings.displayText.right.fontSize = settings.displayText.fontSizeRight
-				--
-				IsTtdActive()
-				FillSpellData()
-				ConstructInsanityBar()
-				ConstructOptionsPanel()
-
-				SLASH_TWINTOP1 = "/twintop"
-				SLASH_TWINTOP2 = "/tib"
-			end			
-		end	
-
-		if event == "PLAYER_LOGOUT" then
-			TwintopInsanityBarSettings = settings
-		end
-				
-		if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_SPECIALIZATION_CHANGED" then
-			EventRegistration()		
-				
-			local affectingCombat = UnitAffectingCombat("player")
-
-			if (not affectingCombat) and (
-				(not settings.displayBar.alwaysShow) and (
-					(not settings.displayBar.notZeroShow) or
-					(settings.displayBar.notZeroShow and snapshotData.insanity == 0))) then	
-				barContainerFrame:Hide()
+	if event == "ADDON_LOADED" and arg1 == "TwintopInsanityBar" then
+		self:UnregisterEvent("ADDON_LOADED")
+		if not addonData.loaded then
+			addonData.loaded = true
+			LoadDefaultSettings()
+			if TwintopInsanityBarSettings then
+				settings = MergeSettings(settings,TwintopInsanityBarSettings)
 			end
+			--Temporary fix for font settings placement until BfA
+			settings.displayText.left.fontSize = settings.displayText.fontSizeLeft
+			settings.displayText.middle.fontSize = settings.displayText.fontSizeMiddle
+			settings.displayText.right.fontSize = settings.displayText.fontSizeRight
+			--
+			IsTtdActive()
+			FillSpellData()
+			ConstructInsanityBar()
+			ConstructOptionsPanel()
+
+			SLASH_TWINTOP1 = "/twintop"
+			SLASH_TWINTOP2 = "/tib"
+		end			
+	end	
+
+	if event == "PLAYER_LOGOUT" then
+		TwintopInsanityBarSettings = settings
+	end
+			
+	if event == "PLAYER_ENTERING_WORLD" or event == "PLAYER_TALENT_UPDATE" or event == "PLAYER_SPECIALIZATION_CHANGED" then
+		EventRegistration()		
+			
+		local affectingCombat = UnitAffectingCombat("player")
+
+		if (not affectingCombat) and (
+			(not settings.displayBar.alwaysShow) and (
+				(not settings.displayBar.notZeroShow) or
+				(settings.displayBar.notZeroShow and snapshotData.insanity == 0))) then	
+			barContainerFrame:Hide()
 		end
 	end
 end)
@@ -4397,6 +4418,7 @@ do
 	end
 
 	local function InterfaceOptionsFrame_OpenToCategory_Fix(panel)
+		local doNotRun = false
 		if doNotRun or InCombatLockdown() then return end
 		local panelName = get_panel_name(panel)
 		if not panelName then return end -- if its not part of our list return early
