@@ -22,11 +22,11 @@ local print, UnitHealth, UnitHealthMax, table = print, UnitHealth, UnitHealthMax
 local strfind, strsub, InCombatLockdown = strfind, strsub, InCombatLockdown
 local mabs, msin, mfloor, mceil, mmin, mmax = math.abs, math.sin, math.floor, math.ceil, math.min, math.max
 local GetAddOnMetadata, StaticPopupDialogs, InterfaceOptions_AddCategory = GetAddOnMetadata, StaticPopupDialogs, InterfaceOptions_AddCategory
-local UIDropDownMenu_SetWidth, UIDropDownMenu_SetText, UIDropDownMenu_JustifyText = UIDropDownMenu_SetWidth, UIDropDownMenu_SetText, UIDropDownMenu_JustifyText
+local L_UIDropDownMenu_SetWidth, L_UIDropDownMenu_SetText, L_UIDropDownMenu_JustifyText = L_UIDropDownMenu_SetWidth, L_UIDropDownMenu_SetText, L_UIDropDownMenu_JustifyText
 local InterfaceOptionsFrame_OpenToCategory, StaticPopup_Show, InterfaceOptionsFrameAddOnsListScrollBar = InterfaceOptionsFrame_OpenToCategory, StaticPopup_Show, InterfaceOptionsFrameAddOnsListScrollBar
-local InterfaceOptionsListButton_ToggleSubCategories, CloseDropDownMenus, UIDropDownMenu_AddButton = InterfaceOptionsListButton_ToggleSubCategories, CloseDropDownMenus, UIDropDownMenu_AddButton
-local UIDropDownMenu_CreateInfo, OpacitySliderFrame = UIDropDownMenu_CreateInfo, OpacitySliderFrame
-local UIDropDownMenu_Initialize, INTERFACEOPTIONS_ADDONCATEGORIES = UIDropDownMenu_Initialize, INTERFACEOPTIONS_ADDONCATEGORIES
+local InterfaceOptionsListButton_ToggleSubCategories, L_CloseDropDownMenus, L_UIDropDownMenu_AddButton = InterfaceOptionsListButton_ToggleSubCategories, L_CloseDropDownMenus, L_UIDropDownMenu_AddButton
+local L_UIDropDownMenu_CreateInfo, OpacitySliderFrame = L_UIDropDownMenu_CreateInfo, OpacitySliderFrame
+local L_UIDropDownMenu_Initialize, INTERFACEOPTIONS_ADDONCATEGORIES = L_UIDropDownMenu_Initialize, INTERFACEOPTIONS_ADDONCATEGORIES
 
 local addonVersion = GetAddOnMetadata(addonName, "Version")
 local addonReleaseDate = "June 04, 2018"
@@ -2162,18 +2162,18 @@ local function ConstructOptionsPanel()
 	yCoord = yCoord - yOffset2
 	
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.insanityBarTexture = CreateFrame("FRAME", "TIBInsanityBarTexture", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.insanityBarTexture = CreateFrame("FRAME", "TIBInsanityBarTexture", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.insanityBarTexture.label = BuildSectionHeader(parent, "Main Bar Texture", xCoord+xPadding, yCoord)
 	controls.dropDown.insanityBarTexture.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.insanityBarTexture:SetPoint("TOPLEFT", xCoord+xPadding, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.insanityBarTexture, 250)
-	UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, settings.textures.insanityBarName)
-	UIDropDownMenu_JustifyText(controls.dropDown.insanityBarTexture, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.insanityBarTexture, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, settings.textures.insanityBarName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.insanityBarTexture, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.insanityBarTexture, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.insanityBarTexture, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local textures = addonData.libs.SharedMedia:HashTable("statusbar")
 		local texturesList = addonData.libs.SharedMedia:List("statusbar")
 		if (level or 1) == 1 or menuList == nil then
@@ -2183,7 +2183,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Status Bar Textures " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2197,7 +2197,7 @@ local function ConstructOptionsPanel()
 					info.arg1 = textures[v]
 					info.arg2 = v
 					info.icon = textures[v]
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -2208,33 +2208,33 @@ local function ConstructOptionsPanel()
 		settings.textures.insanityBar = newValue
 		settings.textures.insanityBarName = newName
 		insanityFrame:SetStatusBarTexture(settings.textures.insanityBar)
-		UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, newName)
+		L_UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, newName)
 		if settings.textures.textureLock then
 			settings.textures.castingBar = newValue
 			settings.textures.castingBarName = newName
 			castingFrame:SetStatusBarTexture(settings.textures.castingBar)
-			UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, newName)
 			settings.textures.passiveBar = newValue
 			settings.textures.passiveBarName = newName
 			passiveFrame:SetStatusBarTexture(settings.textures.passiveBar)
-			UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, newName)
 		end
-		CloseDropDownMenus()
+		L_CloseDropDownMenus()
 	end
 		
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.castingBarTexture = CreateFrame("FRAME", "TIBCastBarTexture", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.castingBarTexture = CreateFrame("FRAME", "TIBCastBarTexture", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.castingBarTexture.label = BuildSectionHeader(parent, "Casting Bar Texture", xCoord2-20, yCoord)
 	controls.dropDown.castingBarTexture.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.castingBarTexture:SetPoint("TOPLEFT", xCoord2-30, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.castingBarTexture, 250)
-	UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, settings.textures.castingBarName)
-	UIDropDownMenu_JustifyText(controls.dropDown.castingBarTexture, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.castingBarTexture, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, settings.textures.castingBarName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.castingBarTexture, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.castingBarTexture, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.castingBarTexture, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local textures = addonData.libs.SharedMedia:HashTable("statusbar")
 		local texturesList = addonData.libs.SharedMedia:List("statusbar")
 		if (level or 1) == 1 or menuList == nil then
@@ -2244,7 +2244,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Status Bar Textures " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2258,7 +2258,7 @@ local function ConstructOptionsPanel()
 					info.arg1 = textures[v]
 					info.arg2 = v
 					info.icon = textures[v]
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -2269,35 +2269,35 @@ local function ConstructOptionsPanel()
 		settings.textures.castingBar = newValue
 		settings.textures.castingBarName = newName
 		castingFrame:SetStatusBarTexture(settings.textures.castingBar)
-		UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, newName)
+		L_UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, newName)
 		if settings.textures.textureLock then
 			settings.textures.insanityBar = newValue
 			settings.textures.insanityBarName = newName
 			insanityFrame:SetStatusBarTexture(settings.textures.insanityBar)
-			UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, newName)
 			settings.textures.passiveBar = newValue
 			settings.textures.passiveBarName = newName
 			passiveFrame:SetStatusBarTexture(settings.textures.passiveBar)
-			UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, newName)
 		end
-		CloseDropDownMenus()
+		L_CloseDropDownMenus()
 	end
 
 	yCoord = yCoord - yOffset1
 		
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.passiveBarTexture = CreateFrame("FRAME", "TIBPassiveBarTexture", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.passiveBarTexture = CreateFrame("FRAME", "TIBPassiveBarTexture", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.passiveBarTexture.label = BuildSectionHeader(parent, "Passive Bar Texture", xCoord+xPadding, yCoord)
 	controls.dropDown.passiveBarTexture.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.passiveBarTexture:SetPoint("TOPLEFT", xCoord+xPadding, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.passiveBarTexture, 250)
-	UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, settings.textures.passiveBarName)
-	UIDropDownMenu_JustifyText(controls.dropDown.passiveBarTexture, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.passiveBarTexture, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, settings.textures.passiveBarName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.passiveBarTexture, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.passiveBarTexture, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.passiveBarTexture, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local textures = addonData.libs.SharedMedia:HashTable("statusbar")
 		local texturesList = addonData.libs.SharedMedia:List("statusbar")
 		if (level or 1) == 1 or menuList == nil then
@@ -2307,7 +2307,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Status Bar Textures " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2321,7 +2321,7 @@ local function ConstructOptionsPanel()
 					info.arg1 = textures[v]
 					info.arg2 = v
 					info.icon = textures[v]
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -2332,18 +2332,18 @@ local function ConstructOptionsPanel()
 		settings.textures.passiveBar = newValue
 		settings.textures.passiveBarName = newName
 		passiveFrame:SetStatusBarTexture(settings.textures.passiveBar)
-		UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, newName)
+		L_UIDropDownMenu_SetText(controls.dropDown.passiveBarTexture, newName)
 		if settings.textures.textureLock then
 			settings.textures.insanityBar = newValue
 			settings.textures.insanityBarName = newName
 			insanityFrame:SetStatusBarTexture(settings.textures.insanityBar)
-			UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, newName)
 			settings.textures.castingBar = newValue
 			settings.textures.castingBarName = newName
 			castingFrame:SetStatusBarTexture(settings.textures.castingBar)
-			UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, newName)
 		end
-		CloseDropDownMenus()
+		L_CloseDropDownMenus()
 	end	
 	
 	controls.checkBoxes.textureLock = CreateFrame("CheckButton", "TIBCB1_TEXTURE1", parent, "ChatConfigCheckButtonTemplate")
@@ -2358,11 +2358,11 @@ local function ConstructOptionsPanel()
 			settings.textures.passiveBar = settings.textures.insanityBar
 			settings.textures.passiveBarName = settings.textures.insanityBarName
 			passiveFrame:SetStatusBarTexture(settings.textures.passiveBar)
-			UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, settings.textures.passiveBarName)
+			L_UIDropDownMenu_SetText(controls.dropDown.insanityBarTexture, settings.textures.passiveBarName)
 			settings.textures.castingBar = settings.textures.insanityBar
 			settings.textures.castingBarName = settings.textures.insanityBarName
 			castingFrame:SetStatusBarTexture(settings.textures.castingBar)
-			UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, settings.textures.castingBarName)
+			L_UIDropDownMenu_SetText(controls.dropDown.castingBarTexture, settings.textures.castingBarName)
 		end
 	end)
 
@@ -2370,18 +2370,18 @@ local function ConstructOptionsPanel()
 	yCoord = yCoord - yOffset1
 	
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.borderTexture = CreateFrame("FRAME", "TIBBorderTexture", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.borderTexture = CreateFrame("FRAME", "TIBBorderTexture", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.borderTexture.label = BuildSectionHeader(parent, "Border Texture", xCoord+xPadding, yCoord)
 	controls.dropDown.borderTexture.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.borderTexture:SetPoint("TOPLEFT", xCoord+xPadding, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.borderTexture, 250)
-	UIDropDownMenu_SetText(controls.dropDown.borderTexture, settings.textures.borderName)
-	UIDropDownMenu_JustifyText(controls.dropDown.borderTexture, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.borderTexture, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.borderTexture, settings.textures.borderName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.borderTexture, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.borderTexture, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.borderTexture, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local textures = addonData.libs.SharedMedia:HashTable("border")
 		local texturesList = addonData.libs.SharedMedia:List("border")
 		if (level or 1) == 1 or menuList == nil then
@@ -2391,7 +2391,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Border Textures " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2405,7 +2405,7 @@ local function ConstructOptionsPanel()
 					info.arg1 = textures[v]
 					info.arg2 = v
 					info.icon = textures[v]
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -2432,23 +2432,23 @@ local function ConstructOptionsPanel()
 		end
 		barBorderFrame:SetBackdropColor(0, 0, 0, 0)
 		barBorderFrame:SetBackdropBorderColor(GetRGBAFromString(settings.colors.bar.border, true))
-		UIDropDownMenu_SetText(controls.dropDown.borderTexture, newName)
-		CloseDropDownMenus()
+		L_UIDropDownMenu_SetText(controls.dropDown.borderTexture, newName)
+		L_CloseDropDownMenus()
 	end
 	
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.backgroundTexture = CreateFrame("FRAME", "TIBBackgroundTexture", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.backgroundTexture = CreateFrame("FRAME", "TIBBackgroundTexture", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.backgroundTexture.label = BuildSectionHeader(parent, "Background (Empty Bar) Texture", xCoord2-20, yCoord)
 	controls.dropDown.backgroundTexture.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.backgroundTexture:SetPoint("TOPLEFT", xCoord2-30, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.backgroundTexture, 250)
-	UIDropDownMenu_SetText(controls.dropDown.backgroundTexture, settings.textures.backgroundName)
-	UIDropDownMenu_JustifyText(controls.dropDown.backgroundTexture, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.backgroundTexture, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.backgroundTexture, settings.textures.backgroundName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.backgroundTexture, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.backgroundTexture, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.backgroundTexture, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local textures = addonData.libs.SharedMedia:HashTable("background")
 		local texturesList = addonData.libs.SharedMedia:List("background")
 		if (level or 1) == 1 or menuList == nil then
@@ -2458,7 +2458,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Background Textures " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2472,7 +2472,7 @@ local function ConstructOptionsPanel()
 					info.arg1 = textures[v]
 					info.arg2 = v
 					info.icon = textures[v]
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -2489,8 +2489,8 @@ local function ConstructOptionsPanel()
 										insets = {0, 0, 0, 0}
 										})
 		barContainerFrame:SetBackdropColor(GetRGBAFromString(settings.colors.bar.background, true))
-		UIDropDownMenu_SetText(controls.dropDown.backgroundTexture, newName)
-		CloseDropDownMenus()
+		L_UIDropDownMenu_SetText(controls.dropDown.backgroundTexture, newName)
+		L_CloseDropDownMenus()
 	end
 
 
@@ -2836,18 +2836,18 @@ local function ConstructOptionsPanel()
 	yCoord = yCoord - yOffset2
 	
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.fontLeft = CreateFrame("FRAME", "TIBFontLeft", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.fontLeft = CreateFrame("FRAME", "TIBFontLeft", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.fontLeft.label = BuildSectionHeader(parent, "Left Bar Font Face", xCoord+xPadding, yCoord)
 	controls.dropDown.fontLeft.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.fontLeft:SetPoint("TOPLEFT", xCoord+xPadding, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.fontLeft, 250)
-	UIDropDownMenu_SetText(controls.dropDown.fontLeft, settings.displayText.left.fontFaceName)
-	UIDropDownMenu_JustifyText(controls.dropDown.fontLeft, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.fontLeft, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.fontLeft, settings.displayText.left.fontFaceName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.fontLeft, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.fontLeft, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.fontLeft, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local fonts = addonData.libs.SharedMedia:HashTable("font")
 		local fontsList = addonData.libs.SharedMedia:List("font")
 		if (level or 1) == 1 or menuList == nil then
@@ -2857,7 +2857,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Fonts " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2872,7 +2872,7 @@ local function ConstructOptionsPanel()
 					info.arg2 = v
 					info.fontObject = CreateFont(v)
 					info.fontObject:SetFont(fonts[v], 12, "OUTLINE")
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -2883,33 +2883,33 @@ local function ConstructOptionsPanel()
 		settings.displayText.left.fontFace = newValue
 		settings.displayText.left.fontFaceName = newName
 		leftTextFrame.font:SetFont(settings.displayText.left.fontFace, settings.displayText.left.fontSize, "OUTLINE")
-		UIDropDownMenu_SetText(controls.dropDown.fontLeft, newName)
+		L_UIDropDownMenu_SetText(controls.dropDown.fontLeft, newName)
 		if settings.displayText.fontFaceLock then
 			settings.displayText.middle.fontFace = newValue
 			settings.displayText.middle.fontFaceName = newName
 			middleTextFrame.font:SetFont(settings.displayText.middle.fontFace, settings.displayText.middle.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontMiddle, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.fontMiddle, newName)
 			settings.displayText.right.fontFace = newValue
 			settings.displayText.right.fontFaceName = newName
 			rightTextFrame.font:SetFont(settings.displayText.right.fontFace, settings.displayText.right.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontRight, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.fontRight, newName)
 		end
-		CloseDropDownMenus()
+		L_CloseDropDownMenus()
 	end
 		
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.fontMiddle = CreateFrame("FRAME", "TIBfFontMiddle", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.fontMiddle = CreateFrame("FRAME", "TIBfFontMiddle", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.fontMiddle.label = BuildSectionHeader(parent, "Middle Bar Font Face", xCoord2-20, yCoord)
 	controls.dropDown.fontMiddle.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.fontMiddle:SetPoint("TOPLEFT", xCoord2-30, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.fontMiddle, 250)
-	UIDropDownMenu_SetText(controls.dropDown.fontMiddle, settings.displayText.middle.fontFaceName)
-	UIDropDownMenu_JustifyText(controls.dropDown.fontMiddle, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.fontMiddle, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.fontMiddle, settings.displayText.middle.fontFaceName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.fontMiddle, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.fontMiddle, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.fontMiddle, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local fonts = addonData.libs.SharedMedia:HashTable("font")
 		local fontsList = addonData.libs.SharedMedia:List("font")
 		if (level or 1) == 1 or menuList == nil then
@@ -2919,7 +2919,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Fonts " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2934,7 +2934,7 @@ local function ConstructOptionsPanel()
 					info.arg2 = v
 					info.fontObject = CreateFont(v)
 					info.fontObject:SetFont(fonts[v], 12, "OUTLINE")
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -2945,35 +2945,35 @@ local function ConstructOptionsPanel()
 		settings.displayText.middle.fontFace = newValue
 		settings.displayText.middle.fontFaceName = newName
 		middleTextFrame.font:SetFont(settings.displayText.middle.fontFace, settings.displayText.middle.fontSize, "OUTLINE")
-		UIDropDownMenu_SetText(controls.dropDown.fontMiddle, newName)
+		L_UIDropDownMenu_SetText(controls.dropDown.fontMiddle, newName)
 		if settings.displayText.fontFaceLock then
 			settings.displayText.left.fontFace = newValue
 			settings.displayText.left.fontFaceName = newName
 			leftTextFrame.font:SetFont(settings.displayText.left.fontFace, settings.displayText.left.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontLeft, newName)			
+			L_UIDropDownMenu_SetText(controls.dropDown.fontLeft, newName)			
 			settings.displayText.right.fontFace = newValue
 			settings.displayText.right.fontFaceName = newName
 			rightTextFrame.font:SetFont(settings.displayText.right.fontFace, settings.displayText.right.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontRight, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.fontRight, newName)
 		end
-		CloseDropDownMenus()
+		L_CloseDropDownMenus()
 	end
 
 	yCoord = yCoord - yOffset3 - yOffset4
 		
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.fontRight = CreateFrame("FRAME", "TIBFontRight", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.fontRight = CreateFrame("FRAME", "TIBFontRight", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.fontRight.label = BuildSectionHeader(parent, "Right Bar Font Face", xCoord+xPadding, yCoord)
 	controls.dropDown.fontRight.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.fontRight:SetPoint("TOPLEFT", xCoord+xPadding, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.fontRight, 250)
-	UIDropDownMenu_SetText(controls.dropDown.fontRight, settings.displayText.right.fontFaceName)
-	UIDropDownMenu_JustifyText(controls.dropDown.fontRight, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.fontRight, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.fontRight, settings.displayText.right.fontFaceName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.fontRight, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.fontRight, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.fontRight, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local fonts = addonData.libs.SharedMedia:HashTable("font")
 		local fontsList = addonData.libs.SharedMedia:List("font")
 		if (level or 1) == 1 or menuList == nil then
@@ -2983,7 +2983,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Fonts " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -2998,7 +2998,7 @@ local function ConstructOptionsPanel()
 					info.arg2 = v
 					info.fontObject = CreateFont(v)
 					info.fontObject:SetFont(fonts[v], 12, "OUTLINE")
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -3009,18 +3009,18 @@ local function ConstructOptionsPanel()
 		settings.displayText.right.fontFace = newValue
 		settings.displayText.right.fontFaceName = newName
 		rightTextFrame.font:SetFont(settings.displayText.right.fontFace, settings.displayText.right.fontSize, "OUTLINE")
-		UIDropDownMenu_SetText(controls.dropDown.fontRight, newName)
+		L_UIDropDownMenu_SetText(controls.dropDown.fontRight, newName)
 		if settings.displayText.fontFaceLock then
 			settings.displayText.left.fontFace = newValue
 			settings.displayText.left.fontFaceName = newName
 			leftTextFrame.font:SetFont(settings.displayText.left.fontFace, settings.displayText.left.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontLeft, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.fontLeft, newName)
 			settings.displayText.middle.fontFace = newValue
 			settings.displayText.middle.fontFaceName = newName
 			middleTextFrame.font:SetFont(settings.displayText.middle.fontFace, settings.displayText.middle.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontMiddle, newName)
+			L_UIDropDownMenu_SetText(controls.dropDown.fontMiddle, newName)
 		end
-		CloseDropDownMenus()
+		L_CloseDropDownMenus()
 	end
 	
 	controls.checkBoxes.fontFaceLock = CreateFrame("CheckButton", "TIBCB1_FONTFACE1", parent, "ChatConfigCheckButtonTemplate")
@@ -3035,11 +3035,11 @@ local function ConstructOptionsPanel()
 			settings.displayText.middle.fontFace = settings.displayText.left.fontFace
 			settings.displayText.middle.fontFaceName = settings.displayText.left.fontFaceName
 			middleTextFrame.font:SetFont(settings.displayText.middle.fontFace, settings.displayText.middle.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontMiddle, settings.displayText.middle.fontFaceName)
+			L_UIDropDownMenu_SetText(controls.dropDown.fontMiddle, settings.displayText.middle.fontFaceName)
 			settings.displayText.right.fontFace = settings.displayText.left.fontFace
 			settings.displayText.right.fontFaceName = settings.displayText.left.fontFaceName
 			rightTextFrame.font:SetFont(settings.displayText.right.fontFace, settings.displayText.right.fontSize, "OUTLINE")
-			UIDropDownMenu_SetText(controls.dropDown.fontRight, settings.displayText.right.fontFaceName)
+			L_UIDropDownMenu_SetText(controls.dropDown.fontRight, settings.displayText.right.fontFaceName)
 		end
 	end)
 
@@ -3668,18 +3668,18 @@ local function ConstructOptionsPanel()
 	
 		
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.s2mAudio = CreateFrame("FRAME", "TIBS2MDeathAudio", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.s2mAudio = CreateFrame("FRAME", "TIBS2MDeathAudio", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.s2mAudio.label = BuildSectionHeader(parent, "Surrender to Madness Ending Audio", xCoord2-20, yCoord+20)
 	controls.dropDown.s2mAudio.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.s2mAudio:SetPoint("TOPLEFT", xCoord2-30, yCoord-yOffset2+20)
-	UIDropDownMenu_SetWidth(controls.dropDown.s2mAudio, 250)
-	UIDropDownMenu_SetText(controls.dropDown.s2mAudio, settings.audio.s2mDeath.soundName)
-	UIDropDownMenu_JustifyText(controls.dropDown.s2mAudio, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.s2mAudio, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.s2mAudio, settings.audio.s2mDeath.soundName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.s2mAudio, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.s2mAudio, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.s2mAudio, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local sounds = addonData.libs.SharedMedia:HashTable("sound")
 		local soundsList = addonData.libs.SharedMedia:List("sound")
 		if (level or 1) == 1 or menuList == nil then
@@ -3689,7 +3689,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Sounds " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -3702,7 +3702,7 @@ local function ConstructOptionsPanel()
 					info.func = self.SetValue			
 					info.arg1 = sounds[v]
 					info.arg2 = v
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -3712,8 +3712,8 @@ local function ConstructOptionsPanel()
 	function controls.dropDown.s2mAudio:SetValue(newValue, newName)
 		settings.audio.s2mDeath.sound = newValue
 		settings.audio.s2mDeath.soundName = newName
-		UIDropDownMenu_SetText(controls.dropDown.s2mAudio, newName)
-		CloseDropDownMenus()
+		L_UIDropDownMenu_SetText(controls.dropDown.s2mAudio, newName)
+		L_CloseDropDownMenus()
 		PlaySoundFile(settings.audio.s2mDeath.sound, "Master")
 	end
 
@@ -3915,18 +3915,18 @@ local function ConstructOptionsPanel()
 			
 	yCoord = yCoord - yOffset3
 	-- Create the dropdown, and configure its appearance
-	controls.dropDown.mindbenderAudio = CreateFrame("FRAME", "TIBMindbenderAudio", parent, "UIDropDownMenuTemplate")
+	controls.dropDown.mindbenderAudio = CreateFrame("FRAME", "TIBMindbenderAudio", parent, "L_UIDropDownMenuTemplate")
 	controls.dropDown.mindbenderAudio.label = BuildSectionHeader(parent, "Mindbender Ready Audio", xCoord+xPadding, yCoord)
 	controls.dropDown.mindbenderAudio.label.font:SetFontObject(GameFontNormal)
 	controls.dropDown.mindbenderAudio:SetPoint("TOPLEFT", xCoord+xPadding, yCoord-yOffset2)
-	UIDropDownMenu_SetWidth(controls.dropDown.mindbenderAudio, 250)
-	UIDropDownMenu_SetText(controls.dropDown.mindbenderAudio, settings.audio.mindbender.soundName)
-	UIDropDownMenu_JustifyText(controls.dropDown.mindbenderAudio, "LEFT")
+	L_UIDropDownMenu_SetWidth(controls.dropDown.mindbenderAudio, 250)
+	L_UIDropDownMenu_SetText(controls.dropDown.mindbenderAudio, settings.audio.mindbender.soundName)
+	L_UIDropDownMenu_JustifyText(controls.dropDown.mindbenderAudio, "LEFT")
 
 	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(controls.dropDown.mindbenderAudio, function(self, level, menuList)
+	L_UIDropDownMenu_Initialize(controls.dropDown.mindbenderAudio, function(self, level, menuList)
 		local entries = 25
-		local info = UIDropDownMenu_CreateInfo()
+		local info = L_UIDropDownMenu_CreateInfo()
 		local sounds = addonData.libs.SharedMedia:HashTable("sound")
 		local soundsList = addonData.libs.SharedMedia:List("sound")
 		if (level or 1) == 1 or menuList == nil then
@@ -3936,7 +3936,7 @@ local function ConstructOptionsPanel()
 				info.notCheckable = true
 				info.text = "Sounds " .. i+1
 				info.menuList = i
-				UIDropDownMenu_AddButton(info)
+				L_UIDropDownMenu_AddButton(info)
 			end
 		else
 			local start = entries * menuList
@@ -3949,7 +3949,7 @@ local function ConstructOptionsPanel()
 					info.func = self.SetValue			
 					info.arg1 = sounds[v]
 					info.arg2 = v
-					UIDropDownMenu_AddButton(info, level)
+					L_UIDropDownMenu_AddButton(info, level)
 				end
 			end
 		end
@@ -3959,8 +3959,8 @@ local function ConstructOptionsPanel()
 	function controls.dropDown.mindbenderAudio:SetValue(newValue, newName)
 		settings.audio.mindbender.sound = newValue
 		settings.audio.mindbender.soundName = newName
-		UIDropDownMenu_SetText(controls.dropDown.mindbenderAudio, newName)
-		CloseDropDownMenus()
+		L_UIDropDownMenu_SetText(controls.dropDown.mindbenderAudio, newName)
+		L_CloseDropDownMenus()
 		PlaySoundFile(settings.audio.mindbender.sound, "Master")
 	end
 
