@@ -1,4 +1,7 @@
 local addonName = ...
+-- Don't load addon if you're not a priest
+local _, _, CLASS_ID = UnitClass("player")
+if CLASS_ID ~= 5 then return end
 
 -- Localize globals
 local CreateFrame, UnitBuff, GetSpellInfo = CreateFrame, UnitBuff, GetSpellInfo
@@ -16,7 +19,7 @@ local UnitCastingInfo, UnitChannelInfo = UnitCastingInfo, UnitChannelInfo
 local mod, GetTotemInfo, GetSpellCooldown, UnitPower = mod, GetTotemInfo, GetSpellCooldown, UnitPower
 local getglobal, ReloadUI, unpack, CreateFont = getglobal, ReloadUI, unpack, CreateFont
 local print, UnitHealth, UnitHealthMax, table = print, UnitHealth, UnitHealthMax, table
-local strfind, strsub, InCombatLockdown, UnitClass = strfind, strsub, InCombatLockdown, UnitClass
+local strfind, strsub, InCombatLockdown = strfind, strsub, InCombatLockdown
 local mabs, msin, mfloor, mceil, mmin, mmax = math.abs, math.sin, math.floor, math.ceil, math.min, math.max
 local GetAddOnMetadata, StaticPopupDialogs, InterfaceOptions_AddCategory = GetAddOnMetadata, StaticPopupDialogs, InterfaceOptions_AddCategory
 local UIDropDownMenu_SetWidth, UIDropDownMenu_SetText, UIDropDownMenu_JustifyText = UIDropDownMenu_SetWidth, UIDropDownMenu_SetText, UIDropDownMenu_JustifyText
@@ -27,7 +30,6 @@ local UIDropDownMenu_Initialize, INTERFACEOPTIONS_ADDONCATEGORIES = UIDropDownMe
 
 local addonVersion = GetAddOnMetadata(addonName, "Version")
 local addonReleaseDate = "June 04, 2018"
-local classIndex = select(3, UnitClass("player"))
 local barContainerFrame = CreateFrame("Frame", nil, UIParent)
 local insanityFrame = CreateFrame("StatusBar", nil, barContainerFrame)
 local castingFrame = CreateFrame("StatusBar", nil, barContainerFrame)
@@ -4349,12 +4351,6 @@ insanityFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 insanityFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 insanityFrame:RegisterEvent("PLAYER_LOGOUT") -- Fired when about to log out
 insanityFrame:SetScript("OnEvent", function(self, event, arg1, ...)
-	if classIndex ~= 5 then
-		-- Not playing a priest. Stop listening to events.
-		self:UnregisterAllEvents()
-		return
-	end
-
 	if event == "ADDON_LOADED" and arg1 == "TwintopInsanityBar" then
 		self:UnregisterEvent("ADDON_LOADED")
 		if not addonData.loaded then
